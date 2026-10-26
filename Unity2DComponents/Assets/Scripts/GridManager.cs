@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace ModularGrid
 {
@@ -9,6 +10,12 @@ namespace ModularGrid
         Adjacent
     }
 
+    public enum GridConnectionDirectionality
+    {
+        Unidirectional,
+        Bidirectional
+    }
+
     public sealed class GridManager : MonoBehaviour
     {
         [SerializeField] private GridShape shape = GridShape.Square;
@@ -16,7 +23,13 @@ namespace ModularGrid
         [SerializeField, Min(1)] private int height = 10;
         [SerializeField, Min(0.01f)] private float cellSize = 1f;
         [SerializeField] bool use2DPhysics = true;
+        [SerializeField] bool useMeshes = true;
         [SerializeField] private PlacementStrategy placementStrategy = PlacementStrategy.Free;
+        [SerializeField, Tooltip("Bidirectional accepts either endpoint role. Unidirectional requires a Start-to-End match.")]
+        private GridConnectionDirectionality connectionDirectionality = GridConnectionDirectionality.Bidirectional;
+
+        [SerializeField] GameObject TileBase;
+
         [SerializeField] private Material tileMaterial;
 
         private readonly HashSet<GridCoordinate> occupiedCells = new HashSet<GridCoordinate>();
@@ -26,6 +39,7 @@ namespace ModularGrid
         public GridShape Shape => shape;
         public bool Use2DPhysics => use2DPhysics;
         public PlacementStrategy Strategy => placementStrategy;
+        public GridConnectionDirectionality ConnectionDirectionality => connectionDirectionality;
         public LayerMask TileLayerMask => 1 << gameObject.layer;
 
         private void Awake()
@@ -106,7 +120,8 @@ namespace ModularGrid
 
                 GridPieceConnections connections = footprint.GetComponent<GridPieceConnections>();
                 if (connectionResolver.RequiresConnection(connections, proposedCellList, shape))
-                    return connectionResolver.HasMatchingConnection(footprint, connections, anchor, shape, rotationSteps);
+                    return connectionResolver.HasMatchingConnection(footprint, connections, anchor, shape, rotationSteps,
+                        connectionDirectionality);
             }
 
             return true;
@@ -148,24 +163,45 @@ namespace ModularGrid
 
         private void CreateCell(GridCoordinate coordinate)
         {
-            GameObject tile = new GameObject($"Cell {coordinate.X},{coordinate.Y}");
-            tile.layer = gameObject.layer;
-            tile.transform.SetParent(generatedTiles, false);
-            tile.transform.position = CellToWorld(coordinate);
-            if (!use2DPhysics)
-                tile.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+           
 
-            Mesh mesh = CreateCellMesh();
-            MeshFilter filter = tile.AddComponent<MeshFilter>();
-            filter.sharedMesh = mesh;
-            MeshRenderer renderer = tile.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = tileMaterial;
-            tile.AddComponent<GridCell>().Initialize(coordinate);
 
-            if (use2DPhysics)
-                Add2DCollider(tile, mesh.vertices);
+            if (!useMeshes)
+            {
+                GameObject tile = Instantiate(TileBase);
+                tile.name = $"Cell {coordinate.X},{coordinate.Y}";
+                tile.layer = gameObject.layer;
+                tile.transform.SetParent(generatedTiles, false);
+                tile.transform.position = CellToWorld(coordinate);
+                if (!use2DPhysics)
+                    tile.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+                tile.AddComponent<GridCell>().Initialize(coordinate);
+   
+            }
             else
-                tile.AddComponent<MeshCollider>().sharedMesh = mesh;
+            {
+                GameObject tile = new GameObject($"Cell {coordinate.X},{coordinate.Y}");
+                tile.layer = gameObject.layer;
+                tile.transform.SetParent(generatedTiles, false);
+                tile.transform.position = CellToWorld(coordinate);
+                if (!use2DPhysics)
+                    tile.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+
+                Mesh mesh = CreateCellMesh();
+                MeshFilter filter = tile.AddComponent<MeshFilter>();
+                filter.sharedMesh = mesh;
+                MeshRenderer renderer = tile.AddComponent<MeshRenderer>();
+                renderer.sharedMaterial = tileMaterial;
+                tile.AddComponent<GridCell>().Initialize(coordinate);
+
+                if (use2DPhysics)
+                    Add2DCollider(tile, mesh.vertices);
+                else
+                    tile.AddComponent<MeshCollider>().sharedMesh = mesh;
+            }
+            
+
+           
         }
 
         private Mesh CreateCellMesh()

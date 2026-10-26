@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ModularGrid
 {
@@ -10,7 +9,7 @@ namespace ModularGrid
 
         public bool TryGetHoveredCell(out GridCoordinate coordinate)
         {
-            if (TryGetHoveredCell(out GridCell cell))
+            if (TryGetHoveredCell(GetInputPointerPosition(), out GridCell cell))
             {
                 coordinate = cell.Coordinate;
                 return true;
@@ -20,16 +19,19 @@ namespace ModularGrid
         }
 
         public bool TryGetHoveredCell(out GridCell hoveredCell)
+            => TryGetHoveredCell(GetInputPointerPosition(), out hoveredCell);
+
+        public bool TryGetHoveredCell(Vector2 screenPosition, out GridCell hoveredCell)
         {
             hoveredCell = null;
-            if (grid == null || Mouse.current == null)
+            if (grid == null)
                 return false;
 
             Camera cameraToUse = pointerCamera != null ? pointerCamera : Camera.main;
             if (cameraToUse == null)
                 return false;
 
-            Ray ray = cameraToUse.ScreenPointToRay(Mouse.current.position.ReadValue());
+            Ray ray = cameraToUse.ScreenPointToRay(screenPosition);
             if (grid.Use2DPhysics)
             {
                 RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(ray, Mathf.Infinity, grid.TileLayerMask);
@@ -58,6 +60,12 @@ namespace ModularGrid
             }
 
             return false;
+        }
+
+        private static Vector2 GetInputPointerPosition()
+        {
+            GridInputRouter inputRouter = FindObjectOfType<GridInputRouter>();
+            return inputRouter != null ? inputRouter.PointerPosition : Vector2.zero;
         }
     }
 }

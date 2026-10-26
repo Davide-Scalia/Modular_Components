@@ -39,7 +39,8 @@ namespace ModularGrid
         }
 
         public bool HasMatchingConnection(GridFootprint footprint, GridPieceConnections connections,
-            GridCoordinate anchor, GridShape shape, int rotationSteps)
+            GridCoordinate anchor, GridShape shape, int rotationSteps,
+            GridConnectionDirectionality directionality)
         {
             PruneDestroyedPieces();
             if (connections == null || !connections.TryGetResolvedEnds(footprint, shape, rotationSteps, candidateEnds))
@@ -59,6 +60,12 @@ namespace ModularGrid
 
                     foreach (ResolvedGridConnectionEnd existingEnd in existingEnds)
                     {
+                        if (directionality == GridConnectionDirectionality.Unidirectional &&
+                            candidateEnd.FlowRole != GridConnectionFlowRole.Either &&
+                            existingEnd.FlowRole != GridConnectionFlowRole.Either &&
+                            candidateEnd.FlowRole == existingEnd.FlowRole)
+                            continue;
+
                         GridCoordinate existingCell = placed.Anchor + existingEnd.CellOffset;
                         if (candidateCell + candidateFacing != existingCell ||
                             !GridLayout.TryGetDirectionOffset(existingEnd.Facing, shape, out GridCoordinate existingFacing) ||

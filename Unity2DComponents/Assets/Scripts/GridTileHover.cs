@@ -6,6 +6,7 @@ namespace ModularGrid
     public sealed class GridTileHover : MonoBehaviour
     {
         [SerializeField] private GridPointerPicker pointerPicker;
+        [SerializeField] private GridInputRouter inputRouter;
         [SerializeField] private Color hoverColor = new Color(1f, 0.85f, 0.2f, 1f);
 
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
@@ -19,11 +20,20 @@ namespace ModularGrid
         {
             originalBlock = new MaterialPropertyBlock();
             hoverBlock = new MaterialPropertyBlock();
+            if (inputRouter == null)
+                inputRouter = FindObjectOfType<GridInputRouter>();
         }
 
         private void Update()
         {
-            GridCell nextCell = pointerPicker != null && pointerPicker.TryGetHoveredCell(out GridCell cell) ? cell : null;
+            if (inputRouter == null || inputRouter.PointerOverUI)
+            {
+                ClearCurrent();
+                return;
+            }
+
+            GridCell nextCell = pointerPicker != null &&
+                                pointerPicker.TryGetHoveredCell(inputRouter.PointerPosition, out GridCell cell) ? cell : null;
             if (nextCell == currentCell)
                 return;
 

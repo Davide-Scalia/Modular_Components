@@ -165,15 +165,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec098249918948a0a23d00ed71576c9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ModularGrid.GridPieceConnections
-  paths:
-  - Directionality: 0
-    Start:
-      Cell:
-        X: 1
-        Y: 2
-      Facing: 2
-    End:
-      Cell:
-        X: 1
-        Y: 0
-      Facing: 6
+  setupMode: 0
+  entrances:
+  - Cell:
+      X: 1
+      Y: 2
+    Facing: 2
+    FlowRole: 0
+  exits:
+  - Cell:
+      X: 1
+      Y: 0
+    Facing: 6
+    FlowRole: 0
+  openings: []
+  paths: []

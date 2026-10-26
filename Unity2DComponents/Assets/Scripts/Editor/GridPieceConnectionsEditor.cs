@@ -5,14 +5,22 @@ using UnityEngine;
 [CustomEditor(typeof(GridPieceConnections))]
 public sealed class GridPieceConnectionsEditor : Editor
 {
-    private SerializedProperty paths;
+    private SerializedProperty setupMode;
+    private SerializedProperty entrances;
+    private SerializedProperty exits;
+    private SerializedProperty openings;
+    private SerializedProperty legacyPaths;
     private GridFootprint footprint;
-    private int selectedPath;
-    private bool selectedStart = true;
+    private int selectedIndex = -1;
+    private int selectedListId = -1;
 
     private void OnEnable()
     {
-        paths = serializedObject.FindProperty("paths");
+        setupMode = serializedObject.FindProperty("setupMode");
+        entrances = serializedObject.FindProperty("entrances");
+        exits = serializedObject.FindProperty("exits");
+        openings = serializedObject.FindProperty("openings");
+        legacyPaths = serializedObject.FindProperty("paths");
         footprint = ((GridPieceConnections)target).GetComponent<GridFootprint>();
     }
 
@@ -26,70 +34,94 @@ public sealed class GridPieceConnectionsEditor : Editor
             return;
         }
 
-        EditorGUILayout.LabelField("Connection paths", EditorStyles.boldLabel);
-        for (int i = 0; i < paths.arraySize;)
+        if (legacyPaths.arraySize > 0)
         {
-            if (!DrawPath(i))
-                i++;
+            EditorGUILayout.HelpBox("This asset contains old paired paths. Migration keeps their endpoint cells and facings, and merges duplicate shared openings.", MessageType.Info);
+            if (GUILayout.Button("Migrate Legacy Paths"))
+            {
+                Undo.RecordObject(target, "Migrate Grid Connections");
+                ((GridPieceConnections)target).MigrateLegacyPaths();
+                EditorUtility.SetDirty(target);
+                serializedObject.Update();
+                setupMode = serializedObject.FindProperty("setupMode");
+                entrances = serializedObject.FindProperty("entrances");
+                exits = serializedObject.FindProperty("exits");
+                openings = serializedObject.FindProperty("openings");
+                legacyPaths = serializedObject.FindProperty("paths");
+                selectedIndex = -1;
+                selectedListId = -1;
+            }
         }
 
-        if (GUILayout.Button("Add Path"))
+        EditorGUILayout.PropertyField(setupMode);
+        GridConnectionSetupMode mode = (GridConnectionSetupMode)setupMode.enumValueIndex;
+        if (mode == GridConnectionSetupMode.EntrancesAndExits)
         {
-            int index = paths.arraySize++;
-            SerializedProperty path = paths.GetArrayElementAtIndex(index);
-            SetEndpoint(path.FindPropertyRelative("Start"), 0, 0);
-            SetEndpoint(path.FindPropertyRelative("End"), 0, 0);
-            selectedPath = index;
-            selectedStart = true;
+            DrawEndpointList("Entrances", entrances, GridConnectionFlowRole.Entrance, 0);
+            DrawEndpointList("Exits", exits, GridConnectionFlowRole.Exit, 1);
         }
+        else
+            DrawEndpointList("Openings", openings, GridConnectionFlowRole.Either, 2);
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Footprint connection grid", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("Select Start or End for a path, then click its occupied cell. Both ends may use the same cell; set different facings to represent separate sides. Connections work in either direction when endpoint cells are adjacent and their facings point toward each other. Use cardinal directions on square grids and the six axial directions on hex grids.", MessageType.Info);
-        DrawGrid();
+        EditorGUILayout.HelpBox(mode == GridConnectionSetupMode.EntrancesAndExits
+            ? "Choose an endpoint in a list, then click an occupied cell. Unidirectional connections require an Entrance-to-Exit match; Bidirectional accepts either role. Endpoints must be adjacent and face each other."
+            : "Each opening is independent and can connect as an Entrance, Exit, or Either. Choose an opening, then click an occupied cell. Bidirectional ignores flow roles; Unidirectional requires opposite roles unless an opening is Either.", MessageType.Info);
+        DrawGrid(mode);
         serializedObject.ApplyModifiedProperties();
     }
 
-    private bool DrawPath(int index)
+    private void DrawEndpointList(string label, SerializedProperty list, GridConnectionFlowRole defaultRole, int listId)
     {
-        SerializedProperty path = paths.GetArrayElementAtIndex(index);
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField($"Path {index + 1}", EditorStyles.boldLabel);
-        if (GUILayout.Button("Remove", GUILayout.Width(64)))
+        EditorGUILayout.LabelField(label, EditorStyles.boldLabel);
+        if (GUILayout.Button("Add", GUILayout.Width(54)))
         {
-            paths.DeleteArrayElementAtIndex(index);
-            if (selectedPath >= paths.arraySize)
-                selectedPath = paths.arraySize - 1;
+            int index = list.arraySize++;
+            SerializedProperty endpoint = list.GetArrayElementAtIndex(index);
+            SetEndpointToFirstOccupiedCell(endpoint);
+            endpoint.FindPropertyRelative("Facing").enumValueIndex = 0;
+            SerializedProperty role = endpoint.FindPropertyRelative("FlowRole");
+            if (role != null)
+                role.enumValueIndex = (int)defaultRole;
+            selectedIndex = index;
+            selectedListId = listId;
+        }
+        EditorGUILayout.EndHorizontal();
+
+        for (int i = 0; i < list.arraySize;)
+        {
+            SerializedProperty endpoint = list.GetArrayElementAtIndex(i);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Toggle(selectedListId == listId && selectedIndex == i, $"#{i + 1}", "Button", GUILayout.Width(40)))
+            {
+                selectedListId = listId;
+                selectedIndex = i;
+            }
+
+            SerializedProperty cell = endpoint.FindPropertyRelative("Cell");
+            EditorGUILayout.LabelField($"Cell {cell.FindPropertyRelative("X").intValue},{cell.FindPropertyRelative("Y").intValue}", GUILayout.Width(82));
+            EditorGUILayout.PropertyField(endpoint.FindPropertyRelative("Facing"), GUIContent.none, GUILayout.MinWidth(74));
+            SerializedProperty flowRole = endpoint.FindPropertyRelative("FlowRole");
+            if (label == "Openings")
+                EditorGUILayout.PropertyField(flowRole, GUIContent.none, GUILayout.MinWidth(90));
+
+            if (GUILayout.Button("×", GUILayout.Width(24)))
+            {
+                list.DeleteArrayElementAtIndex(i);
+                if (selectedListId == listId && selectedIndex >= list.arraySize)
+                    selectedIndex = list.arraySize - 1;
+            }
+            else
+                i++;
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
-            return true;
         }
-        EditorGUILayout.EndHorizontal();
-
-        SerializedProperty start = path.FindPropertyRelative("Start");
-        SerializedProperty end = path.FindPropertyRelative("End");
-        DrawEndRow("Start", start, index, true);
-        DrawEndRow("End", end, index, false);
         EditorGUILayout.EndVertical();
-        return false;
     }
 
-    private void DrawEndRow(string label, SerializedProperty endpoint, int pathIndex, bool isStart)
-    {
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Toggle(selectedPath == pathIndex && selectedStart == isStart, $"Set {label}", "Button", GUILayout.Width(76)))
-        {
-            selectedPath = pathIndex;
-            selectedStart = isStart;
-        }
-        SerializedProperty cell = endpoint.FindPropertyRelative("Cell");
-        EditorGUILayout.LabelField($"Cell {cell.FindPropertyRelative("X").intValue},{cell.FindPropertyRelative("Y").intValue}", GUILayout.Width(74));
-        EditorGUILayout.PropertyField(endpoint.FindPropertyRelative("Facing"), GUIContent.none);
-        EditorGUILayout.EndHorizontal();
-    }
-
-    private void DrawGrid()
+    private void DrawGrid(GridConnectionSetupMode mode)
     {
         for (int y = footprint.EditorGridHeight - 1; y >= 0; y--)
         {
@@ -98,19 +130,21 @@ public sealed class GridPieceConnectionsEditor : Editor
             for (int x = 0; x < footprint.EditorGridWidth; x++)
             {
                 string label = footprint.IsEditorCellOccupied(x, y) ? "■" : "·";
-                for (int i = 0; i < paths.arraySize; i++)
+                if (mode == GridConnectionSetupMode.EntrancesAndExits)
                 {
-                    SerializedProperty path = paths.GetArrayElementAtIndex(i);
-                    if (EndpointAt(path.FindPropertyRelative("Start"), x, y)) label += $" S{i + 1}";
-                    if (EndpointAt(path.FindPropertyRelative("End"), x, y)) label += $" E{i + 1}";
+                    label = AddCellLabels(label, entrances, x, y, "I");
+                    label = AddCellLabels(label, exits, x, y, "O");
                 }
+                else
+                    label = AddCellLabels(label, openings, x, y, "A");
 
                 bool wasEnabled = GUI.enabled;
-                GUI.enabled = wasEnabled && selectedPath >= 0 && selectedPath < paths.arraySize && footprint.IsEditorCellOccupied(x, y);
+                SerializedProperty selectedList = GetSelectedList();
+                GUI.enabled = wasEnabled && selectedList != null && selectedIndex >= 0 &&
+                              selectedIndex < selectedList.arraySize && footprint.IsEditorCellOccupied(x, y);
                 if (GUILayout.Button(label, GUILayout.MinWidth(44), GUILayout.Height(34)))
                 {
-                    SerializedProperty endpoint = paths.GetArrayElementAtIndex(selectedPath)
-                        .FindPropertyRelative(selectedStart ? "Start" : "End");
+                    SerializedProperty endpoint = selectedList.GetArrayElementAtIndex(selectedIndex);
                     SetEndpoint(endpoint, x, y);
                 }
                 GUI.enabled = wasEnabled;
@@ -120,10 +154,38 @@ public sealed class GridPieceConnectionsEditor : Editor
         }
     }
 
-    private static bool EndpointAt(SerializedProperty endpoint, int x, int y)
+    private SerializedProperty GetSelectedList()
     {
-        SerializedProperty cell = endpoint.FindPropertyRelative("Cell");
-        return cell.FindPropertyRelative("X").intValue == x && cell.FindPropertyRelative("Y").intValue == y;
+        switch (selectedListId)
+        {
+            case 0: return entrances;
+            case 1: return exits;
+            case 2: return openings;
+            default: return null;
+        }
+    }
+
+    private static string AddCellLabels(string label, SerializedProperty list, int x, int y, string prefix)
+    {
+        for (int i = 0; i < list.arraySize; i++)
+        {
+            SerializedProperty cell = list.GetArrayElementAtIndex(i).FindPropertyRelative("Cell");
+            if (cell.FindPropertyRelative("X").intValue == x && cell.FindPropertyRelative("Y").intValue == y)
+                label += $" {prefix}{i + 1}";
+        }
+        return label;
+    }
+
+    private void SetEndpointToFirstOccupiedCell(SerializedProperty endpoint)
+    {
+        for (int y = 0; y < footprint.EditorGridHeight; y++)
+            for (int x = 0; x < footprint.EditorGridWidth; x++)
+                if (footprint.IsEditorCellOccupied(x, y))
+                {
+                    SetEndpoint(endpoint, x, y);
+                    return;
+                }
+        SetEndpoint(endpoint, 0, 0);
     }
 
     private static void SetEndpoint(SerializedProperty endpoint, int x, int y)

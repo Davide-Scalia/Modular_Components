@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace ModularGrid
 {
@@ -8,6 +7,7 @@ namespace ModularGrid
         [SerializeField] private GridManager grid;
         [SerializeField] private GridPointerPicker pointerPicker;
         [SerializeField] private GridFootprint activeFootprint;
+        [SerializeField] private GridInputRouter inputRouter;
 
         private GridFootprint preview;
         private Renderer[] previewRenderers;
@@ -16,45 +16,85 @@ namespace ModularGrid
         private MaterialPropertyBlock previewBlock;
         private GridCoordinate hoveredCell;
         private bool canPlace;
+        private bool placeRequested;
+        private bool rotateRequested;
 
         public bool CanPlaceAtHoveredCell => canPlace;
 
         private void Awake()
         {
             previewBlock = new MaterialPropertyBlock();
+            if (inputRouter == null)
+                inputRouter = GetComponent<GridInputRouter>();
         }
+
+        private void OnEnable()
+        {
+            if (inputRouter == null)
+                inputRouter = GetComponent<GridInputRouter>();
+            if (inputRouter != null)
+            {
+                inputRouter.PlaceRequested += RequestPlace;
+                inputRouter.RotateRequested += RequestRotate;
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (inputRouter != null)
+            {
+                inputRouter.PlaceRequested -= RequestPlace;
+                inputRouter.RotateRequested -= RequestRotate;
+            }
+        }
+
         private void Update()
         {
-            if (grid == null || pointerPicker == null || activeFootprint == null || Mouse.current == null)
+            if (grid == null || pointerPicker == null || activeFootprint == null || inputRouter == null)
                 return;
 
             EnsurePreview();
             if (preview == null)
                 return;
 
-            if (Mouse.current.rightButton.wasPressedThisFrame)
-                preview.Rotate(grid.Shape);
-
-            if (!pointerPicker.TryGetHoveredCell(out hoveredCell))
+            if (inputRouter.PointerOverUI)
             {
                 canPlace = false;
+                placeRequested = false;
+                rotateRequested = false;
                 preview.gameObject.SetActive(false);
                 return;
             }
 
+            if (rotateRequested)
+            {
+                preview.Rotate(grid.Shape);
+                rotateRequested = false;
+            }
+
+            if (!pointerPicker.TryGetHoveredCell(inputRouter.PointerPosition, out GridCell cell))
+            {
+                canPlace = false;
+                placeRequested = false;
+                preview.gameObject.SetActive(false);
+                return;
+            }
+
+            hoveredCell = cell.Coordinate;
             preview.gameObject.SetActive(true);
             preview.transform.position = grid.GetFootprintPivotWorld(preview, hoveredCell);
             preview.ApplyRotation(grid.Shape, grid.Use2DPhysics);
             canPlace = grid.CanPlace(preview, hoveredCell);
             ShowValidity(canPlace);
 
-            if (Mouse.current.leftButton.wasPressedThisFrame && canPlace && grid.TryPlace(preview, hoveredCell))
+            if (placeRequested && canPlace && grid.TryPlace(preview, hoveredCell))
             {
                 SetPreviewColliders(true);
                 ClearValidity();
                 preview = null;
                 EnsurePreview();
             }
+            placeRequested = false;
         }
 
         public void BeginPlacement(GridFootprint footprint)
@@ -66,6 +106,9 @@ namespace ModularGrid
             preview = null;
             EnsurePreview();
         }
+
+        private void RequestPlace() => placeRequested = true;
+        private void RequestRotate() => rotateRequested = true;
 
         private void EnsurePreview()
         {
