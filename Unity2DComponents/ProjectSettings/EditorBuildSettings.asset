@@ -8,5 +8,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/RpgToolkit/Demo/RpgArenaDemo.unity
+    guid: 3a7eb398ab10f1849b843b9faf34b57d
+  - enabled: 1
+    path: Assets/RpgToolkit/Demo/RpgFreeDemo.unity
+    guid: 9b1d72a3ea57b014f9060da6731edaaa
+  - enabled: 1
+    path: Assets/RpgToolkit/Demo/RpgMapDemo.unity
+    guid: bc9e42f4adf59774aab0ddd91b4fe89e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputSystem_Actions",
     "maps": [
         {
@@ -12,7 +13,8 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": true,
+                    "priority": 0
                 },
                 {
                     "name": "Look",
@@ -21,7 +23,8 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": true,
+                    "priority": 0
                 },
                 {
                     "name": "Attack",
@@ -30,7 +33,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Interact",
@@ -39,7 +43,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Hold",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Crouch",
@@ -48,7 +53,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Jump",
@@ -57,7 +63,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Previous",
@@ -66,7 +73,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Next",
@@ -75,7 +83,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Sprint",
@@ -84,7 +93,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -486,7 +496,8 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": true,
+                    "priority": 0
                 },
                 {
                     "name": "PointerDelta",
@@ -495,7 +506,8 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Place",
@@ -504,7 +516,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Rotate",
@@ -513,7 +526,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Pan",
@@ -522,7 +536,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -594,7 +609,8 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Submit",
@@ -603,7 +619,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Cancel",
@@ -612,7 +629,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "Point",
@@ -621,7 +639,8 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": true,
+                    "priority": 0
                 },
                 {
                     "name": "Click",
@@ -630,7 +649,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": true,
+                    "priority": 0
                 },
                 {
                     "name": "RightClick",
@@ -639,7 +659,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "MiddleClick",
@@ -648,7 +669,8 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "ScrollWheel",
@@ -657,7 +679,8 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "TrackedDevicePosition",
@@ -666,7 +689,8 @@
                     "expectedControlType": "Vector3",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 },
                 {
                     "name": "TrackedDeviceOrientation",
@@ -675,7 +699,8 @@
                     "expectedControlType": "Quaternion",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -1100,206 +1125,208 @@
             ]
         },
         {
-          "name": "Driving",
-          "id": "33a1c4fb-f564-4a70-b15a-9de20cfefbba",
-          "actions": [
-            {
-              "name": "Steer",
-              "type": "Value",
-              "id": "abae1cca-f461-42f0-a61a-d56719735d78",
-              "expectedControlType": "Axis",
-              "processors": "",
-              "interactions": "",
-              "initialStateCheck": true
-            },
-            {
-              "name": "Throttle",
-              "type": "Value",
-              "id": "10d1595d-5d05-431a-8696-ba988f907505",
-              "expectedControlType": "Axis",
-              "processors": "",
-              "interactions": "",
-              "initialStateCheck": true
-            }
-          ],
-          "bindings": [
-            {
-              "name": "",
-              "id": "1bad9d0b-85a4-4d1c-9ac3-b3c453121f44",
-              "path": "1DAxis",
-              "interactions": "",
-              "processors": "",
-              "groups": "",
-              "action": "Steer",
-              "isComposite": true,
-              "isPartOfComposite": false
-            },
-            {
-              "name": "negative",
-              "id": "19ca4ceb-9590-4345-9f47-e3ed43cca5c7",
-              "path": "<Keyboard>/a",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Steer",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "positive",
-              "id": "ec9fca98-0e5f-448a-8ee0-72db7ef5ed73",
-              "path": "<Keyboard>/d",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Steer",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "",
-              "id": "61d29f20-6a1a-4d6c-b26e-320adaa62bab",
-              "path": "1DAxis",
-              "interactions": "",
-              "processors": "",
-              "groups": "",
-              "action": "Throttle",
-              "isComposite": true,
-              "isPartOfComposite": false
-            },
-            {
-              "name": "negative",
-              "id": "4321320f-ea06-4239-bf87-4c8e9223d186",
-              "path": "<Keyboard>/s",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Throttle",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "positive",
-              "id": "2072aa84-a6e4-4bd1-b73a-db2abc9efbc8",
-              "path": "<Keyboard>/w",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Throttle",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "",
-              "id": "c1522f00-0e8a-442a-b625-ab1c47f0cd18",
-              "path": "1DAxis",
-              "interactions": "",
-              "processors": "",
-              "groups": "",
-              "action": "Steer",
-              "isComposite": true,
-              "isPartOfComposite": false
-            },
-            {
-              "name": "negative",
-              "id": "0888bd36-903a-4885-98b5-fc9f5024788c",
-              "path": "<Keyboard>/leftArrow",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Steer",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "positive",
-              "id": "49b04363-1ca5-4fd9-988d-7df43dfe1518",
-              "path": "<Keyboard>/rightArrow",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Steer",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "",
-              "id": "835d5ec0-baf4-4fc5-83e7-8b96a033792c",
-              "path": "1DAxis",
-              "interactions": "",
-              "processors": "",
-              "groups": "",
-              "action": "Throttle",
-              "isComposite": true,
-              "isPartOfComposite": false
-            },
-            {
-              "name": "negative",
-              "id": "115fc943-7918-47f8-a171-2e61b766e51a",
-              "path": "<Keyboard>/downArrow",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Throttle",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "positive",
-              "id": "84330357-706a-490c-9e8e-84792c345ac9",
-              "path": "<Keyboard>/upArrow",
-              "interactions": "",
-              "processors": "",
-              "groups": "Keyboard&Mouse",
-              "action": "Throttle",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "",
-              "id": "451c68e8-b135-442f-8871-463d6a96529a",
-              "path": "<Gamepad>/leftStick/x",
-              "interactions": "",
-              "processors": "",
-              "groups": "Gamepad",
-              "action": "Steer",
-              "isComposite": false,
-              "isPartOfComposite": false
-            },
-            {
-              "name": "",
-              "id": "15f411b9-0670-4aed-ba7b-c80c0a1ef42a",
-              "path": "1DAxis",
-              "interactions": "",
-              "processors": "",
-              "groups": "",
-              "action": "Throttle",
-              "isComposite": true,
-              "isPartOfComposite": false
-            },
-            {
-              "name": "negative",
-              "id": "3e55aaa2-7623-4a38-a447-449613363870",
-              "path": "<Gamepad>/leftTrigger",
-              "interactions": "",
-              "processors": "",
-              "groups": "Gamepad",
-              "action": "Throttle",
-              "isComposite": false,
-              "isPartOfComposite": true
-            },
-            {
-              "name": "positive",
-              "id": "9ff846da-b981-4eb2-8479-3d3058eae64b",
-              "path": "<Gamepad>/rightTrigger",
-              "interactions": "",
-              "processors": "",
-              "groups": "Gamepad",
-              "action": "Throttle",
-              "isComposite": false,
-              "isPartOfComposite": true
-            }
-          ]
+            "name": "Driving",
+            "id": "33a1c4fb-f564-4a70-b15a-9de20cfefbba",
+            "actions": [
+                {
+                    "name": "Steer",
+                    "type": "Value",
+                    "id": "abae1cca-f461-42f0-a61a-d56719735d78",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "Throttle",
+                    "type": "Value",
+                    "id": "10d1595d-5d05-431a-8696-ba988f907505",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "1bad9d0b-85a4-4d1c-9ac3-b3c453121f44",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Steer",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "19ca4ceb-9590-4345-9f47-e3ed43cca5c7",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "ec9fca98-0e5f-448a-8ee0-72db7ef5ed73",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "61d29f20-6a1a-4d6c-b26e-320adaa62bab",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throttle",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "4321320f-ea06-4239-bf87-4c8e9223d186",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "2072aa84-a6e4-4bd1-b73a-db2abc9efbc8",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "c1522f00-0e8a-442a-b625-ab1c47f0cd18",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Steer",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "0888bd36-903a-4885-98b5-fc9f5024788c",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "49b04363-1ca5-4fd9-988d-7df43dfe1518",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "835d5ec0-baf4-4fc5-83e7-8b96a033792c",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throttle",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "115fc943-7918-47f8-a171-2e61b766e51a",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "84330357-706a-490c-9e8e-84792c345ac9",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "451c68e8-b135-442f-8871-463d6a96529a",
+                    "path": "<Gamepad>/leftStick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "15f411b9-0670-4aed-ba7b-c80c0a1ef42a",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throttle",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "3e55aaa2-7623-4a38-a447-449613363870",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "9ff846da-b981-4eb2-8479-3d3058eae64b",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Throttle",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
         }
     ],
     "controlSchemes": [
