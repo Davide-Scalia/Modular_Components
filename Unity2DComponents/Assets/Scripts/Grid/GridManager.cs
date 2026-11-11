@@ -163,9 +163,6 @@ namespace ModularGrid
 
         private void CreateCell(GridCoordinate coordinate)
         {
-           
-
-
             if (!useMeshes)
             {
                 GameObject tile = Instantiate(TileBase);
