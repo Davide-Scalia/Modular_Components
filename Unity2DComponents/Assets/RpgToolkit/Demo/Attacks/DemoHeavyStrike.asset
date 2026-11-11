@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bbafe34c250fe247baa207d471114b5, type: 3}
+  m_Name: DemoHeavyStrike
+  m_EditorClassIdentifier: Assembly-CSharp::RpgToolkit.AttackDefinition
+  damageKind: 0
+  icon: {fileID: 2928238611586524929, guid: a9de3df6f198d414ca379d70c8a4eac4, type: 3}
+  scalingPercent: 220
+  preparationCost: 25
+  completionCost: 40
+  preparationPattern: {fileID: 11400000, guid: 2fdc8e3d5052f764cb2e09d9d303fa4c, type: 2}
+  preparationHits: 0
+  completionPattern: {fileID: 11400000, guid: 2fdc8e3d5052f764cb2e09d9d303fa4c, type: 2}
+  completionHits: 1

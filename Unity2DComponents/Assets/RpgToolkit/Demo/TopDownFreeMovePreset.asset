@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dba53149b4ee6fd4d8cf0d174258c7fb, type: 3}
+  m_Name: TopDownFreeMovePreset
+  m_EditorClassIdentifier: Assembly-CSharp::RpgToolkit.RpgPreset
+  description: Moving Freely in the map like a vampire survivor like
+  preview: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
+  explorationMode: 0
+  tacticalCombat: 0
+  movementSpeed: 6
+  maxMovement: 100
+  characterSprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  inputActions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

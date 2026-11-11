@@ -14,18 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModularGrid.GridHotbarCatalog
   items:
   - Footprint: {fileID: 7099854412049659240, guid: 516753587ca56cd46bbaeea2ad55f393, type: 3}
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 59e61206f3da6e348bf96bcdd3c9f763, type: 3}
   - Footprint: {fileID: 7099854412049659240, guid: 2a905094971c154488aa7d5baa1360ca, type: 3}
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 12acbba1bbbfeb048b893a2f0a011f88, type: 3}
   - Footprint: {fileID: 7099854412049659240, guid: c19f26517273e124fb4af98e282a25db, type: 3}
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 06d8b8f969488b945a57b4dde24b7530, type: 3}
   - Footprint: {fileID: 7099854412049659240, guid: 3c3dba1bac494b948b2043937dae391c, type: 3}
     Icon: {fileID: 0}
   - Footprint: {fileID: 7099854412049659240, guid: c7895fa4d714dc8478e985686de45ae3, type: 3}
     Icon: {fileID: 0}
   - Footprint: {fileID: 7099854412049659240, guid: e1d7828bc79b36f488a2a967089e15f4, type: 3}
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 06d8b8f969488b945a57b4dde24b7530, type: 3}
   - Footprint: {fileID: 7099854412049659240, guid: 21a8277c7ad7d62448d2fa406f5ae4ef, type: 3}
     Icon: {fileID: 0}
   - Footprint: {fileID: 7099854412049659240, guid: 33b92421b2dd7df40834bc9687c88445, type: 3}
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: ae5303dfa89e85540becef6f635b4792, type: 3}
