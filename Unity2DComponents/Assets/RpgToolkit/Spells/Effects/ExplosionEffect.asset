@@ -19,7 +19,7 @@ MonoBehaviour:
     Damage: 30
     Speed: 0
     Lifetime: 0.65
-    Radius: 0.45
+    Radius: 0.65
   motion: {fileID: 11400000, guid: 04696a5d4c898f9409a9e6c8b4b01bdd, type: 2}
   targetLayers:
     serializedVersion: 2
@@ -29,7 +29,7 @@ MonoBehaviour:
     m_Bits: 1
   pierces: 0
   bounces: 0
-  areaPulseInterval: 0.01
+  areaPulseInterval: 0.1
   rules:
   - trigger: 5
     conditionMode: 0

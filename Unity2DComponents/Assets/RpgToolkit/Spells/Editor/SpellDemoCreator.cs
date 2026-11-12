@@ -50,11 +50,33 @@ namespace RpgToolkit.Spells.Editor
                 data.FindProperty("seconds").floatValue = 0.5f;
             });
 
+            SpellStatCondition halfway = Asset<SpellStatCondition>(Root + "/Half Lifetime.asset");
+            Set(halfway, data =>
+            {
+                data.FindProperty("stat").enumValueIndex = (int)SpellStat.Lifetime;
+                data.FindProperty("comparison").enumValueIndex = (int)NumericComparison.GreaterOrEqual;
+                data.FindProperty("value").floatValue = 0.5f;
+            });
+            ModifySpellStatEffect growth = Asset<ModifySpellStatEffect>(Root + "/Repeat Radius Growth.asset");
+            Set(growth, data =>
+            {
+                data.FindProperty("stat").enumValueIndex = (int)SpellStat.Radius;
+                data.FindProperty("mode").enumValueIndex = (int)SpellModifierMode.Add;
+                data.FindProperty("flat").floatValue = 0.1f;
+            });
+            DamageOverTimeSpellEffect burn = Asset<DamageOverTimeSpellEffect>(Root + "/Burn On Hit.asset");
+            Set(burn, data =>
+            {
+                data.FindProperty("multiplier").floatValue = 0.1f;
+                data.FindProperty("duration").floatValue = 3f;
+                data.FindProperty("interval").floatValue = 0.25f;
+            });
+
             SpellDefinition area = Asset<SpellDefinition>(Root + "/Burning Area.asset");
             ConfigureSpell(area, SpellForm.Area, prefab, new Color(1f, 0.25f, 0.05f, 0.65f),
                 new SpellBaseStats { Damage = 4f, Speed = 0f, Lifetime = 2f, Radius = 1.5f }, null,
                 1 << TargetLayer, 0, 0, 0, 0.25f,
-                new RuleSpec(SpellTrigger.OnAreaPulse, SpellRuleMode.Repeat, 0f, null, damage));
+                new RuleSpec(SpellTrigger.OnAreaPulse, SpellRuleMode.EveryEvent, 0f, null, damage));
 
             SpawnSpellEffect spawnArea = Asset<SpawnSpellEffect>(Root + "/Spawn Burning Area Effect.asset");
             Set(spawnArea, data =>
@@ -69,26 +91,27 @@ namespace RpgToolkit.Spells.Editor
             ConfigureSpell(piercing, SpellForm.Projectile, prefab, new Color(0.1f, 0.85f, 1f),
                 new SpellBaseStats { Damage = 10f, Speed = 10f, Lifetime = 2f, Radius = 0.12f }, straightMotion,
                 1 << TargetLayer, 1, 2, 0, 0.25f,
-                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.Repeat, 0f, null, damage));
+                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.EveryEvent, 0f, null, damage));
 
             SpellDefinition gravity = Asset<SpellDefinition>(Root + "/Gravity Bounce.asset");
             ConfigureSpell(gravity, SpellForm.Projectile, prefab, new Color(1f, 0.75f, 0.1f),
                 new SpellBaseStats { Damage = 15f, Speed = 9f, Lifetime = 4f, Radius = 0.18f }, gravityMotion,
                 1 << TargetLayer, 1, 0, 1, 0.25f,
-                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.Repeat, 0f, null, damage));
+                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.EveryEvent, 0f, null, damage));
 
             SpellDefinition homing = Asset<SpellDefinition>(Root + "/Homing Orb.asset");
             ConfigureSpell(homing, SpellForm.Projectile, prefab, new Color(0.85f, 0.2f, 1f),
                 new SpellBaseStats { Damage = 12f, Speed = 7f, Lifetime = 4f, Radius = 0.18f }, homingMotion,
                 1 << TargetLayer, 1, 0, 0, 0.25f,
-                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.Repeat, 0f, null, damage));
+                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.EveryEvent, 0f, null, damage, burn));
 
             SpellDefinition timed = Asset<SpellDefinition>(Root + "/Timed Area Projectile.asset");
             ConfigureSpell(timed, SpellForm.Projectile, prefab, new Color(0.3f, 1f, 0.3f),
                 new SpellBaseStats { Damage = 8f, Speed = 5f, Lifetime = 1.5f, Radius = 0.15f }, straightMotion,
                 1 << TargetLayer, 1, 0, 0, 0.25f,
                 new RuleSpec(SpellTrigger.OnTick, SpellRuleMode.Once, 0f, new SpellCondition[] { halfSecond }, boost),
-                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.Repeat, 0f, null, damage),
+                new RuleSpec(SpellTrigger.OnTick, SpellRuleMode.RepeatOnInterval, 0.25f, new SpellCondition[] { halfway }, growth),
+                new RuleSpec(SpellTrigger.OnHit, SpellRuleMode.EveryEvent, 0f, null, damage),
                 new RuleSpec(SpellTrigger.OnExpire, SpellRuleMode.Once, 0f, null, spawnArea));
 
             SpellDefinition[] spells = { piercing, gravity, homing, timed };

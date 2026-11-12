@@ -11,13 +11,10 @@ namespace RpgToolkit.Spells
             points.Clear();
             if (definition == null || direction.sqrMagnitude <= 0f || maximumPoints <= 0) return;
             EntityStats stats = caster != null ? caster.GetComponent<EntityStats>() : null;
-            SpellCastBudget budget = new SpellCastBudget(1, 0);
-            CasterStatSnapshot snapshot = new CasterStatSnapshot(stats);
-            SpellSpawnRequest request = new SpellSpawnRequest(definition, caster, stats, snapshot, budget, 0,
+            CasterStatSnapshot snapshot = new CasterStatSnapshot(stats, caster);
+            SpellSpawnRequest request = new SpellSpawnRequest(definition, caster, snapshot, null, 0,
                 origin, direction);
-            SpellRuntimeState state = new SpellRuntimeState();
-            state.Initialize(request);
-            SpellEvaluationContext context = new SpellEvaluationContext(state, null, true);
+            SpellEvaluationContext context = new SpellEvaluationContext(request, null, true);
             SpellSimulation2D.Begin(context, request.Direction);
             points.Add(origin);
             if (definition.Form == SpellForm.Area) return;
@@ -31,7 +28,7 @@ namespace RpgToolkit.Spells
                 float deltaTime = Mathf.Min(simulationStep, limit - elapsed);
                 SpellStepResult result = SpellSimulation2D.Step(context, deltaTime);
                 elapsed += deltaTime;
-                points.Add(state.Position);
+                points.Add(context.Position);
                 if (result != SpellStepResult.Active) break;
             }
         }

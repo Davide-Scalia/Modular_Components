@@ -16,9 +16,9 @@ MonoBehaviour:
   runtimePrefab: {fileID: 1728599193861994068, guid: e721347622d03cb4db8195c2ab2c5dd2, type: 3}
   color: {r: 1, g: 0.9600313, b: 0, a: 1}
   baseStats:
-    Damage: 15
+    Damage: 12
     Speed: 3
-    Lifetime: 5
+    Lifetime: 4
     Radius: 0.25
   motion: {fileID: 0}
   targetLayers:
@@ -34,12 +34,12 @@ MonoBehaviour:
   - trigger: 1
     conditionMode: 1
     conditions:
-    - {fileID: 11400000, guid: de1790722fa21734d8010658fa31e254, type: 2}
+    - {fileID: 11400000, guid: ac72bb5974840be4da8fb26d6a036b1b, type: 2}
     effects:
     - {fileID: 11400000, guid: 159a3d4bfd82a99458cb6e464ed02ba2, type: 2}
     - {fileID: 11400000, guid: 79a5e046735217041b255093fad13059, type: 2}
-    mode: 1
-    repeatInterval: 10
+    mode: 2
+    repeatInterval: 0.1
   - trigger: 4
     conditionMode: 0
     conditions: []
@@ -52,12 +52,12 @@ MonoBehaviour:
     conditions: []
     effects:
     - {fileID: 11400000, guid: c94c9cc7ce4f251469ce43fd6c993cbc, type: 2}
-    mode: 0
+    mode: 1
     repeatInterval: 0
   - trigger: 1
     conditionMode: 0
     conditions: []
     effects:
     - {fileID: 11400000, guid: 2dd880bf76dd6f14a98bd06e51219a6c, type: 2}
-    mode: 1
+    mode: 2
     repeatInterval: 0.5

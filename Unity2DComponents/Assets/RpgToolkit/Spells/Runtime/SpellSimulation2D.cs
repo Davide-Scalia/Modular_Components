@@ -15,150 +15,154 @@ namespace RpgToolkit.Spells
                 else context.Velocity = direction.normalized * context.GetSpellStat(SpellStat.Speed);
             }
             ExecuteRules(context, SpellTrigger.OnSpawn);
+            ExecuteRules(context, SpellTrigger.OnTick);
+            context.NextConditionPoll = SpellMath.MinimumInterval;
         }
 
         public static SpellStepResult Step(SpellEvaluationContext context, float deltaTime)
         {
-            SpellRuntimeState state = GetState(context);
-            if (state.Definition == null) return SpellStepResult.Completed;
+            if (context.Definition == null) return SpellStepResult.Completed;
+            context.StepIndex++;
             context.ClearCollision();
-            ExecuteRules(context, SpellTrigger.OnTick);
-            float lifetime = state.GetStat(SpellStat.Lifetime);
-            if (state.Age >= lifetime)
-            {
-                ExecuteRules(context, SpellTrigger.OnExpire);
-                return SpellStepResult.Expired;
-            }
-
-            float step = Mathf.Min(Mathf.Max(0f, deltaTime), lifetime - state.Age);
-            SpellStepResult result = state.Definition.Form == SpellForm.Area
-                ? StepArea(context, step)
-                : StepProjectile(context, step);
-            state.Age += step;
+            float step = Mathf.Min(Mathf.Max(0f, deltaTime), Mathf.Max(0f, context.Lifetime - context.Age));
+            SpellStepResult result = context.Definition.Form == SpellForm.Area
+                ? SpellStepResult.Active : StepProjectile(context, step);
+            context.Age += step;
             if (result != SpellStepResult.Active) return result;
-            if (state.Age + 0.00001f < state.GetStat(SpellStat.Lifetime)) return SpellStepResult.Active;
+
+            context.ClearCollision();
+            RunScheduledRules(context);
+            if (context.Age + 0.00001f >= context.NextConditionPoll)
+            {
+                ExecuteRules(context, SpellTrigger.OnTick);
+                context.NextConditionPoll = context.Age + SpellMath.MinimumInterval;
+            }
+            if (context.Definition.Form == SpellForm.Area && context.Age + 0.00001f >= context.NextAreaPulse)
+            {
+                ExecuteRules(context, SpellTrigger.OnAreaPulse);
+                context.NextAreaPulse = context.Age + context.Definition.AreaPulseInterval;
+            }
+            if (context.Age + 0.00001f < context.Lifetime) return SpellStepResult.Active;
             ExecuteRules(context, SpellTrigger.OnExpire);
             return SpellStepResult.Expired;
         }
 
-        private static SpellStepResult StepArea(SpellEvaluationContext context, float deltaTime)
-        {
-            SpellRuntimeState state = GetState(context);
-            if (state.Age + deltaTime + 0.00001f < state.NextAreaPulse) return SpellStepResult.Active;
-            QueryArea(context);
-            ExecuteRules(context, SpellTrigger.OnAreaPulse);
-            state.NextAreaPulse = state.Age + deltaTime + state.Definition.AreaPulseInterval;
-            return SpellStepResult.Active;
-        }
-
         private static SpellStepResult StepProjectile(SpellEvaluationContext context, float deltaTime)
         {
-            SpellRuntimeState state = GetState(context);
-            state.SyncSpeed();
-            Vector2 origin = state.Position;
-            if (state.Definition.Motion != null) state.Definition.Motion.Advance(context, deltaTime);
-            else state.Position += state.Velocity * deltaTime;
-            Vector2 destination = state.Position;
-            state.Position = origin;
+            context.SyncSpeed();
+            Vector2 origin = context.Position;
+            if (context.Definition.Motion != null) context.Definition.Motion.Advance(context, deltaTime);
+            else context.Position += context.Velocity * deltaTime;
+            Vector2 destination = context.Position;
+            context.Position = origin;
             return Sweep(context, destination);
         }
 
         private static SpellStepResult Sweep(SpellEvaluationContext context, Vector2 destination)
         {
-            SpellRuntimeState state = GetState(context);
-            Vector2 delta = destination - state.Position;
+            Vector2 delta = destination - context.Position;
             float distance = delta.magnitude;
             if (distance <= 0.00001f)
             {
-                state.Position = destination;
+                context.Position = destination;
                 return SpellStepResult.Active;
             }
 
-            int mask = state.Definition.TargetLayers.value | state.Definition.ObstacleLayers.value;
+            int mask = context.Definition.TargetLayers.value | context.Definition.ObstacleLayers.value;
             ContactFilter2D filter = new ContactFilter2D();
             filter.SetLayerMask(mask);
             filter.useTriggers = true;
-            state.PhysicsHits.Clear();
-            Physics2D.CircleCast(state.Position, state.GetStat(SpellStat.Radius), delta / distance,
-                filter, state.PhysicsHits, distance);
-            state.PhysicsHits.Sort((left, right) => left.distance.CompareTo(right.distance));
+            context.PhysicsHits.Clear();
+            Physics2D.CircleCast(context.Position, context.GetSpellStat(SpellStat.Radius), delta / distance,
+                filter, context.PhysicsHits, distance);
+            context.PhysicsHits.Sort((left, right) => left.distance.CompareTo(right.distance));
 
-            for (int i = 0; i < state.PhysicsHits.Count; i++)
+            for (int i = 0; i < context.PhysicsHits.Count; i++)
             {
-                RaycastHit2D hit = state.PhysicsHits[i];
+                RaycastHit2D hit = context.PhysicsHits[i];
                 Collider2D collider = hit.collider;
                 if (collider == null || context.IsCaster(collider)) continue;
-                bool target = Includes(state.Definition.TargetLayers, collider.gameObject.layer);
-                bool obstacle = Includes(state.Definition.ObstacleLayers, collider.gameObject.layer);
+                bool target = Includes(context.Definition.TargetLayers, collider.gameObject.layer);
+                bool obstacle = Includes(context.Definition.ObstacleLayers, collider.gameObject.layer);
                 if (!target && !obstacle) continue;
 
-                state.Position = hit.centroid;
+                context.Position = hit.centroid;
                 context.SetCollision(target ? collider : null, hit.point, hit.normal);
                 bool newTarget = false;
                 if (target)
                 {
                     UnityEngine.Object key = context.HitKey(collider);
-                    newTarget = key != null && state.HitTargets.Add(key);
+                    newTarget = key != null && context.HitTargets.Add(key);
                 }
                 if (obstacle || newTarget) ExecuteRules(context, SpellTrigger.OnHit);
 
                 if (obstacle)
                 {
-                    if (state.BouncesRemaining <= 0) return SpellStepResult.Completed;
-                    state.BouncesRemaining--;
-                    state.Velocity = Vector2.Reflect(state.Velocity, hit.normal);
-                    state.Position = hit.centroid + hit.normal * 0.001f;
+                    if (context.BouncesRemaining <= 0) return SpellStepResult.Completed;
+                    context.BouncesRemaining--;
+                    context.Velocity = Vector2.Reflect(context.Velocity, hit.normal);
+                    context.Position = hit.centroid + hit.normal * 0.001f;
                     ExecuteRules(context, SpellTrigger.OnBounce);
                     return SpellStepResult.Active;
                 }
                 if (!newTarget) continue;
-                if (state.PiercesRemaining <= 0) return SpellStepResult.Completed;
-                state.PiercesRemaining--;
+                if (context.PiercesRemaining <= 0) return SpellStepResult.Completed;
+                context.PiercesRemaining--;
             }
 
-            state.Position = destination;
+            context.Position = destination;
             return SpellStepResult.Active;
-        }
-
-        private static void QueryArea(SpellEvaluationContext context)
-        {
-            SpellRuntimeState state = GetState(context);
-            state.AreaTargets.Clear();
-#pragma warning disable CS0618
-            int count = Physics2D.OverlapCircleNonAlloc(state.Position, state.GetStat(SpellStat.Radius),
-                state.OverlapBuffer, state.Definition.TargetLayers);
-#pragma warning restore CS0618
-            for (int i = 0; i < count; i++)
-            {
-                Collider2D target = state.OverlapBuffer[i];
-                if (target != null && !context.IsCaster(target)) state.AreaTargets.Add(target);
-            }
-            System.Array.Clear(state.OverlapBuffer, 0, count);
         }
 
         private static void ExecuteRules(SpellEvaluationContext context, SpellTrigger trigger)
         {
-            SpellRuntimeState state = GetState(context);
-            IReadOnlyList<SpellRule> rules = state.Definition.Rules;
+            IReadOnlyList<SpellRule> rules = context.Definition.Rules;
             for (int i = 0; i < rules.Count; i++)
             {
                 SpellRule rule = rules[i];
                 if (rule == null || rule.Trigger != trigger) continue;
-                SpellRuleState runtime = state.RuleStates[i];
-                if (rule.Mode == SpellRuleMode.Once && runtime.Fired) continue;
-                if (rule.Mode == SpellRuleMode.Repeat && state.Age + 0.00001f < runtime.NextAllowedTime) continue;
-                //Debug.Log($"this is the age : {state.Age}");
+                SpellRuleState runtime = context.RuleStates[i];
+                if (rule.Mode != SpellRuleMode.EveryEvent && runtime.Fired) continue;
                 if (!ConditionsPass(rule, context)) continue;
-
-                IReadOnlyList<SpellEffect> effects = rule.Effects;
-                for (int effectIndex = 0; effectIndex < effects.Count; effectIndex++)
-                    if (effects[effectIndex] != null) effects[effectIndex].Apply(context);
-
-                if (rule.Mode == SpellRuleMode.Once) runtime.Fired = true;
-                else runtime.NextAllowedTime = state.Age + rule.RepeatInterval;
-                //Debug.Log(runtime.NextAllowedTime);
-                state.RuleStates[i] = runtime;
+                runtime.Fired = true;
+                runtime.Target = context.TargetCollider;
+                runtime.CollisionPoint = context.CollisionPoint;
+                runtime.CollisionNormal = context.CollisionNormal;
+                runtime.NextAllowedTime = context.Age + rule.RepeatInterval;
+                runtime.LastExecutionStep = context.StepIndex;
+                context.RuleStates[i] = runtime;
+                ApplyEffects(rule, context);
             }
+        }
+
+        private static void RunScheduledRules(SpellEvaluationContext context)
+        {
+            IReadOnlyList<SpellRule> rules = context.Definition.Rules;
+            Collider2D target = context.TargetCollider;
+            Vector2 point = context.CollisionPoint;
+            Vector2 normal = context.CollisionNormal;
+            for (int i = 0; i < rules.Count; i++)
+            {
+                SpellRule rule = rules[i];
+                SpellRuleState runtime = context.RuleStates[i];
+                if (rule == null || rule.Mode != SpellRuleMode.RepeatOnInterval || !runtime.Fired ||
+                    runtime.LastExecutionStep == context.StepIndex ||
+                    context.Age + 0.00001f < runtime.NextAllowedTime) continue;
+                context.SetCollision(runtime.Target, runtime.CollisionPoint, runtime.CollisionNormal);
+                runtime.NextAllowedTime = context.Age + rule.RepeatInterval;
+                runtime.LastExecutionStep = context.StepIndex;
+                context.RuleStates[i] = runtime;
+                ApplyEffects(rule, context);
+            }
+            context.SetCollision(target, point, normal);
+        }
+
+        private static void ApplyEffects(SpellRule rule, SpellEvaluationContext context)
+        {
+            if (context.Definition.Form == SpellForm.Area) context.QueryArea();
+            IReadOnlyList<SpellEffect> effects = rule.Effects;
+            for (int i = 0; i < effects.Count; i++)
+                if (effects[i] != null) effects[i].Apply(context);
         }
 
         private static bool ConditionsPass(SpellRule rule, SpellEvaluationContext context)
@@ -178,6 +182,5 @@ namespace RpgToolkit.Spells
 
         private static bool Includes(LayerMask mask, int layer) => (mask.value & (1 << layer)) != 0;
 
-        private static SpellRuntimeState GetState(SpellEvaluationContext context) => context.State;
     }
 }

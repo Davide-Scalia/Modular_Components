@@ -22,7 +22,7 @@ namespace RpgToolkit.Spells
         [SerializeField] private LayerMask obstacleLayers;
         [SerializeField, Min(0)] private int pierces;
         [SerializeField, Min(0)] private int bounces;
-        [SerializeField, Min(0.01f)] private float areaPulseInterval = 0.25f;
+        [SerializeField, Min(SpellMath.MinimumInterval)] private float areaPulseInterval = 0.25f;
         [SerializeField] private SpellRule[] rules = Array.Empty<SpellRule>();
 
         public SpellForm Form => form;
@@ -34,7 +34,7 @@ namespace RpgToolkit.Spells
         public LayerMask ObstacleLayers => obstacleLayers;
         public int Pierces => Mathf.Max(0, pierces);
         public int Bounces => Mathf.Max(0, bounces);
-        public float AreaPulseInterval => Mathf.Max(0.01f, areaPulseInterval);
+        public float AreaPulseInterval => Mathf.Max(SpellMath.MinimumInterval, areaPulseInterval);
         public IReadOnlyList<SpellRule> Rules => rules ?? Array.Empty<SpellRule>();
 
         private void OnValidate()
@@ -45,7 +45,16 @@ namespace RpgToolkit.Spells
             baseStats.Radius = Mathf.Max(0f, baseStats.Radius);
             pierces = Mathf.Max(0, pierces);
             bounces = Mathf.Max(0, bounces);
-            areaPulseInterval = Mathf.Max(0.01f, areaPulseInterval);
+            areaPulseInterval = Mathf.Max(SpellMath.MinimumInterval, areaPulseInterval);
+            foreach (SpellRule rule in Rules)
+            {
+                if (rule == null) continue;
+                if (rule.Mode == SpellRuleMode.RepeatOnInterval && rule.RepeatInterval >= baseStats.Get(SpellStat.Lifetime))
+                    Debug.LogWarning($"{name}: repeat interval {rule.RepeatInterval}s cannot repeat within lifetime {baseStats.Lifetime}s.", this);
+                foreach (SpellEffect effect in rule.Effects)
+                    if (effect is ModifySpellStatEffect modifier && !modifier.IsValid)
+                        Debug.LogError($"{name}: a rule contains an invalid lifetime modifier.", this);
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Increase Radius
   m_EditorClassIdentifier: Assembly-CSharp::RpgToolkit.Spells.ModifySpellStatEffect
   stat: 3
-  flat: 0.1
-  percent: 0
+  mode: 1
+  flat: 0
+  percent: 0.1
   duration: 0

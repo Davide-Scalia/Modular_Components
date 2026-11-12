@@ -7,10 +7,12 @@ namespace RpgToolkit.Spells
     {
         [SerializeField, Min(0f)] private float multiplier = 1f;
         [SerializeField] private bool canCritical = true;
-        [SerializeField] private CasterStatReadMode criticalStatReadMode = CasterStatReadMode.CapturedAtCast;
 
         public override void Apply(SpellEvaluationContext context) =>
             context.DamageTargets(context.GetSpellStat(SpellStat.Damage) * Mathf.Max(0f, multiplier),
-                canCritical, criticalStatReadMode);
+                canCritical);
     }
 }
+
+
+    

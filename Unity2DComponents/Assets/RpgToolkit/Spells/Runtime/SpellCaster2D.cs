@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RpgToolkit.Spells
 {
@@ -6,7 +7,9 @@ namespace RpgToolkit.Spells
     public sealed class SpellCaster2D : MonoBehaviour
     {
         [SerializeField] private SpellWorld2D world;
-        [SerializeField, Min(1)] private int maximumSpellsPerCast = 64;
+        [SerializeField, FormerlySerializedAs("maximumSpellsPerCast"), Min(1),
+         Tooltip("Maximum simultaneously active spells in this cast and all its descendants.")]
+        private int maximumConcurrentSpells = 64;
         [SerializeField, Min(0)] private int maximumSpawnDepth = 8;
         private EntityStats stats;
 
@@ -18,9 +21,9 @@ namespace RpgToolkit.Spells
         {
             if (world == null || definition == null || direction.sqrMagnitude <= 0f) return false;
             if (stats == null) stats = GetComponent<EntityStats>();
-            CasterStatSnapshot snapshot = new CasterStatSnapshot(stats);
-            SpellCastBudget budget = new SpellCastBudget(maximumSpellsPerCast, maximumSpawnDepth);
-            return world.TrySpawn(new SpellSpawnRequest(definition, gameObject, stats, snapshot, budget, 0,
+            CasterStatSnapshot snapshot = new CasterStatSnapshot(stats, gameObject);
+            SpellCastFamily family = new SpellCastFamily(maximumConcurrentSpells, maximumSpawnDepth);
+            return world.TrySpawn(new SpellSpawnRequest(definition, gameObject, snapshot, family, 0,
                 origin, direction), out _);
         }
 

@@ -6,49 +6,61 @@ namespace RpgToolkit.Spells
     public sealed class SpellInstance2D : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer visual;
-        private readonly SpellRuntimeState state = new SpellRuntimeState();
         private SpellWorld2D world;
         private SpellEvaluationContext context;
         private bool running;
 
-        public SpellDefinition Definition => state.Definition;
-        public float Age => state.Age;
-        public Vector2 Velocity => state.Velocity;
-
+        public SpellDefinition Definition => context?.Definition;
+        public float Age => context?.Age ?? 0f;
+        public Vector2 Velocity => context?.Velocity ?? Vector2.zero;
+        internal SpellEvaluationContext Context => context;
         internal void SetWorld(SpellWorld2D value) => world = value;
 
         internal void Initialize(in SpellSpawnRequest request)
         {
-            state.Initialize(request);
-            context = new SpellEvaluationContext(state, world, false);
-            transform.position = state.Position;
-            float diameter = Mathf.Max(0.01f, state.GetStat(SpellStat.Radius) * 2f);
-            transform.localScale = new Vector3(diameter, diameter, 1f);
+            context = new SpellEvaluationContext(request, world, false);
+            UpdateVisual();
             if (visual != null) visual.color = request.Definition.Color;
             running = true;
+            gameObject.SetActive(true);
             SpellSimulation2D.Begin(context, request.Direction);
         }
 
         public void Simulate(float deltaTime)
         {
             if (!running || context == null) return;
-            SpellStepResult result = SpellSimulation2D.Step(context, deltaTime);
-            transform.position = state.Position;
-            float diameter = Mathf.Max(0.01f, state.GetStat(SpellStat.Radius) * 2f);
+            SpellStepResult result;
+            try { result = SpellSimulation2D.Step(context, deltaTime); }
+            catch { world.Release(this); throw; }
+            UpdateVisual();
+            if (result != SpellStepResult.Active) world.Release(this);
+        }
+
+        private void UpdateVisual()
+        {
+            transform.position = context.Position;
+            float diameter = Mathf.Max(0.01f, context.GetSpellStat(SpellStat.Radius) * 2f);
             transform.localScale = new Vector3(diameter, diameter, 1f);
-            if (result == SpellStepResult.Active) return;
-            running = false;
-            world.Release(this);
         }
 
         internal void ResetForPool()
         {
             running = false;
             context = null;
-            state.Reset();
             transform.localScale = Vector3.one;
         }
 
         private void FixedUpdate() => Simulate(Time.fixedDeltaTime);
+        private void OnDisable()
+        {
+            // A disabled object may be in Destroy: never return it to the pool here.
+            if (!running) return;
+            if (world != null) world.Forget(this);
+            ResetForPool();
+        }
+        private void OnDestroy()
+        {
+            if (world != null) world.Forget(this);
+        }
     }
 }

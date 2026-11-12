@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a18a87abbb4370e4c9d4405e162bcfbf, type: 3}
-  m_Name: Spawn Explosion
+  m_Name: Spawn Missiles
   m_EditorClassIdentifier: Assembly-CSharp::RpgToolkit.Spells.SpawnSpellEffect
-  spell: {fileID: 11400000, guid: 9da00f5b6289dda48bc74170b4692c96, type: 2}
-  direction: 1
-  count: 1
-  arc: 0
+  spell: {fileID: 11400000, guid: dfcfc3cd092c61d4c879f398c0aa8169, type: 2}
+  direction: 2
+  count: 3
+  arc: 201

@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caab78918b18dd547b38ba29009cee83, type: 3}
-  m_Name: Speed Decrease Effect
-  m_EditorClassIdentifier: Assembly-CSharp::RpgToolkit.Spells.ModifySpellStatEffect
-  stat: 1
-  flat: 0
-  percent: -0.5
-  duration: 0
+  m_Script: {fileID: 11500000, guid: aef04c05a7cc9944ab4a1d0ce1a08955, type: 3}
+  m_Name: Half Lifetime
+  m_EditorClassIdentifier: Assembly-CSharp::RpgToolkit.Spells.SpellStatCondition
+  stat: 2
+  comparison: 3
+  value: 0.5

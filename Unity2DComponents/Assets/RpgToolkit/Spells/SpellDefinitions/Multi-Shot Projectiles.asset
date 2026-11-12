@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 53cfd490b56e9aa4384437a671d38466, type: 3}
-  m_Name: Timed Area Projectile
+  m_Name: Multi-Shot Projectiles
   m_EditorClassIdentifier: Assembly-CSharp::RpgToolkit.Spells.SpellDefinition
   form: 0
   runtimePrefab: {fileID: 1728599193861994068, guid: e721347622d03cb4db8195c2ab2c5dd2, type: 3}
-  color: {r: 0.3, g: 1, b: 0.3, a: 1}
+  color: {r: 0.98490566, g: 0.98490566, b: 0.98490566, a: 1}
   baseStats:
-    Damage: 8
-    Speed: 5
-    Lifetime: 2.5
-    Radius: 0.15
-  motion: {fileID: 11400000, guid: 04696a5d4c898f9409a9e6c8b4b01bdd, type: 2}
+    Damage: 0
+    Speed: 0
+    Lifetime: 1.5
+    Radius: 0.05
+  motion: {fileID: 0}
   targetLayers:
     serializedVersion: 2
     m_Bits: 4
@@ -29,19 +29,19 @@ MonoBehaviour:
     m_Bits: 1
   pierces: 0
   bounces: 0
-  areaPulseInterval: 0.25
+  areaPulseInterval: 0.1
   rules:
+  - trigger: 0
+    conditionMode: 0
+    conditions: []
+    effects:
+    - {fileID: 11400000, guid: 40376e1c4a3a53d4d83a8acc157aed22, type: 2}
+    mode: 2
+    repeatInterval: 0.5
   - trigger: 1
     conditionMode: 0
     conditions: []
     effects:
-    - {fileID: 11400000, guid: 159a3d4bfd82a99458cb6e464ed02ba2, type: 2}
-    mode: 1
-    repeatInterval: 0.5
-  - trigger: 4
-    conditionMode: 0
-    conditions: []
-    effects:
-    - {fileID: 11400000, guid: 2dd880bf76dd6f14a98bd06e51219a6c, type: 2}
-    mode: 1
-    repeatInterval: 0
+    - {fileID: 11400000, guid: 3e029382e7748fb40b38e42ace548d82, type: 2}
+    mode: 2
+    repeatInterval: 0.1
